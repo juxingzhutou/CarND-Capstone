@@ -26,6 +26,7 @@ TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 
 LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
 MAX_DECEL = 2
+SPEED_LIMIT = 60
 
 
 class WaypointUpdater(object):
@@ -87,6 +88,7 @@ class WaypointUpdater(object):
         closest_idx = self.get_closest_waypoint_idx()
         farthest_idx = closest_idx + LOOKAHEAD_WPS
         base_waypoints = self.base_waypoints.waypoints[closest_idx : farthest_idx]
+        base_waypoints = self.accelerate_waypoints(base_waypoints)
 
         if self.stopline_wp_idx == -1 or (self.stopline_wp_idx >= farthest_idx):
             # Normal forward
@@ -96,6 +98,25 @@ class WaypointUpdater(object):
             lane.waypoints = self.decelerate_waypoints(base_waypoints, closest_idx)
 
         return lane
+
+    def accelerate_waypoints(self, waypoints):
+        if not self.pose:
+            return waypoints
+
+        temp = []
+        v0 = waypoints[0].twist.twist.linear.x
+        for i, wp in enumerate(waypoints):
+            p = Waypoint()
+            p.pose = wp.pose
+
+            dist = self.distance(waypoints, 0, i)
+            vel = v0 + MAX_DECEL * 2 * dist / (MAX_DECEL + 2 * v0)
+
+            p.twist.twist.linear.x = min(SPEED_LIMIT, vel)
+            temp.append(p)
+
+        return temp
+
 
     # Decelarate waypoints
     def decelerate_waypoints(self, waypoints, closest_idx):
