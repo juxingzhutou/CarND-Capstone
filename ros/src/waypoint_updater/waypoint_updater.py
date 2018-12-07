@@ -5,6 +5,7 @@ from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
 from std_msgs.msg import Int32
 from scipy.spatial import KDTree
+from geometry_msgs.msg import TwistStamped
 
 import math
 import numpy as np
@@ -35,6 +36,7 @@ class WaypointUpdater(object):
 
         rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
+        rospy.Subscriber('/current_velocity', TwistStamped, self.velocity_cb)
 
         # TODO: Add a subscriber for /traffic_waypoint and /obstacle_waypoint below
         rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb)
@@ -46,6 +48,8 @@ class WaypointUpdater(object):
         self.base_waypoints = None
         self.waypoints_2d = None
         self.waypoint_tree = None
+
+        self.current_vel = None
 
         self.stopline_wp_idx = -1
 
@@ -100,11 +104,11 @@ class WaypointUpdater(object):
         return lane
 
     def accelerate_waypoints(self, waypoints):
-        if not self.pose:
+        if not self.pose or not self.current_vel:
             return waypoints
 
         temp = []
-        v0 = waypoints[0].twist.twist.linear.x
+        v0 = self.current_vel
         for i, wp in enumerate(waypoints):
             p = Waypoint()
             p.pose = wp.pose
@@ -148,6 +152,10 @@ class WaypointUpdater(object):
         if not self.waypoints_2d:
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
             self.waypoint_tree = KDTree(self.waypoints_2d)
+
+
+    def velocity_cb(self, msg):
+        self.current_vel = msg.twist.linear.x
 
 
     def traffic_cb(self, msg):
