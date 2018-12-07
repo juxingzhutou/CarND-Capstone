@@ -114,7 +114,8 @@ class WaypointUpdater(object):
             p.pose = wp.pose
 
             dist = self.distance(waypoints, 0, i)
-            vel = v0 + MAX_DECEL * 2 * dist / (MAX_DECEL + 2 * v0)
+            # vel = v0 + MAX_DECEL * 2 * dist / (MAX_DECEL + 2 * v0)
+            vel = math.sqrt(2*MAX_DECEL*dist + v0*v0)
 
             p.twist.twist.linear.x = min(SPEED_LIMIT, vel)
             temp.append(p)
