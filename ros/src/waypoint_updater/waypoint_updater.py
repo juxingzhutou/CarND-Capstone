@@ -109,13 +109,15 @@ class WaypointUpdater(object):
 
         temp = []
         v0 = self.current_vel
+        dl = lambda a, b: math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2 + (a.z - b.z) ** 2)
+        first_dist = dl(self.pose.pose.position, waypoints[0].pose.pose.position)
         for i, wp in enumerate(waypoints):
             p = Waypoint()
             p.pose = wp.pose
 
             dist = self.distance(waypoints, 0, i)
             # vel = v0 + MAX_DECEL * 2 * dist / (MAX_DECEL + 2 * v0)
-            vel = math.sqrt(2*MAX_DECEL*dist + v0*v0)
+            vel = math.sqrt(2*MAX_DECEL*dist + v0*v0) + first_dist
 
             p.twist.twist.linear.x = min(SPEED_LIMIT, vel)
             temp.append(p)
