@@ -55,6 +55,8 @@ class TLDetector(object):
         self.waypoints_2d = None
         self.waypoint_tree = None
 
+        self.is_in_sim = True
+
         rospy.spin()
 
     def pose_cb(self, msg):
@@ -69,6 +71,9 @@ class TLDetector(object):
 
     def traffic_cb(self, msg):
         self.lights = msg.lights
+
+        if self.is_in_sim:
+            self.image_cb(None)
 
     def image_cb(self, msg):
         """Identifies red lights in the incoming camera image and publishes the index
