@@ -78,6 +78,8 @@ class TLDetector(object):
             msg (Image): image from car-mounted camera
 
         """
+        return
+
         self.has_image = True
         self.camera_image = msg
         light_wp, state = self.process_traffic_lights()
@@ -163,22 +165,20 @@ class TLDetector(object):
 
         # List of positions that correspond to the line to stop in front of for a given intersection
         stop_line_positions = self.config['stop_line_positions']
-        if(self.pose):
-            car_position = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
+
 
         #TODO find the closest visible traffic light (if one exists)
         light_wp = None
 
-        stop_line_positions = self.config['stop_line_positions']
         if self.pose:
-            car_wp_idx = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
+            car_position = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
 
             min_diff = len(self.base_waypoints.waypoints)
             for i, l in enumerate(self.lights):
                 line = stop_line_positions[i]
                 line_wp_idx = self.get_closest_waypoint(line[0], line[1])
 
-                d = line_wp_idx - car_wp_idx
+                d = line_wp_idx - car_position
                 if d >= 0 and d < min_diff:
                     min_diff = d
                     light = l
