@@ -134,7 +134,7 @@ class WaypointUpdater(object):
 
             # Current position is at the index 0 of the waypoints
             # So stopline is at the index (self.stopline_wp_idx - closest_idx) position of waypoints
-            stop_idx = max(self.stopline_wp_idx - closest_idx - 2, 0)
+            stop_idx = max(self.stopline_wp_idx - closest_idx - 3, 0)
             dist = self.distance(waypoints, i, stop_idx)
             vel = math.sqrt(2 * MAX_DECEL * dist)
             if vel < 1.:
