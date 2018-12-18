@@ -55,7 +55,7 @@ class TLDetector(object):
         self.last_wp = -1
         self.state_count = 0
 
-        self.is_in_sim = True
+        self.is_site = self.config['is_site']
 
         rospy.spin()
 
@@ -72,7 +72,7 @@ class TLDetector(object):
     def traffic_cb(self, msg):
         self.lights = msg.lights
 
-        if self.is_in_sim:
+        if not self.is_site:
             self.image_cb(None)
 
     def image_cb(self, msg):
@@ -142,7 +142,7 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-        if self.is_in_sim:
+        if not self.is_site:
             return light.state
 
 
