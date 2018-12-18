@@ -26,8 +26,8 @@ TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
 LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
-MAX_DECEL = 4
-SPEED_LIMIT = 20
+MAX_DECEL = 4.0
+SPEED_LIMIT = 20.0
 
 
 class WaypointUpdater(object):
@@ -155,7 +155,6 @@ class WaypointUpdater(object):
         if not self.waypoints_2d:
             global SPEED_LIMIT
             SPEED_LIMIT = self.base_waypoints.waypoints[0].twist.twist.linear.x
-            print('first base waypoint %s', self.base_waypoints.waypoints[0])
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
             self.waypoint_tree = KDTree(self.waypoints_2d)
 
