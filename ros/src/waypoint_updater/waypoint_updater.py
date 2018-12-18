@@ -155,7 +155,7 @@ class WaypointUpdater(object):
         if not self.waypoints_2d:
             global SPEED_LIMIT
             SPEED_LIMIT = self.base_waypoints.waypoints[0].twist.twist.linear.x
-            rospy.loginfo('first base waypoint %s', self.base_waypoints.waypoints[0].__dict__)
+            rospy.loginfo('first base waypoint %s', self.base_waypoints.waypoints[0])
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
             self.waypoint_tree = KDTree(self.waypoints_2d)
 
